@@ -1,23 +1,43 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../provider/AuthProvider';
 
 const Login = () => {
+    const {userLogin, setUser} = useContext(AuthContext)
+    const handleSubmit = (e) =>{
+        e.preventDefault();
+        const form = e.target;
+        const email = form.email.value;
+        const password = form.password.value;
+        console.log({email, password});
+        userLogin(email, password)
+        .then(result=>{
+            const user = result.user;
+            setUser(user);
+        })
+        .catch((error)=>{
+            alert(error.code);
+        });
+    }
     return (
         <div className='min-h-screen flex justify-center items-center'>
             <div className="card bg-base-100 w-full max-w-xl shrink-0 rounded-none p-10">
                 <h2 className='font-semibold text-[35px] text-center mb-10'>Login your account</h2>
                 <hr />
-                <form className="card-body">
+                <form onSubmit={handleSubmit} className="card-body">
                     <div className="form-control">
                         <label className="label">
                             <span className="font-semibold text-xl">Email address</span>
                         </label>
-                        <input type="email" placeholder="Enter your email address" className="input input-bordered bg-[#F3F3F3]" required />
+                        <input
+                        name='email' type="email" placeholder="Enter your email address" className="input input-bordered bg-[#F3F3F3]" required />
                     </div>
                     <div className="form-control">
                         <label className="label">
                             <span className="font-semibold text-xl">Password</span>
                         </label>
-                        <input type="password" placeholder="Enter your password" className="input input-bordered bg-[#F3F3F3]" required />
+                        <input
+                        name='password' type="password" placeholder="Enter your password" className="input input-bordered bg-[#F3F3F3]" required />
                         <label className="label">
                             <a href="#" className="label-text-alt link link-hover text-green-600">Forgot password?</a>
                         </label>
