@@ -1,8 +1,11 @@
 import React from 'react';
+import bgImg from '../assets/bg.png'
 
 const AddSection = () => {
     return (
-        <div className='h-[500px]' style={{background: "rgba(5, 0, 29, 0.8)"}}>  </div>
+        <div className='h-[500px]'>
+            <img className='w-full' src={bgImg} alt="" />
+        </div>
     );
 };
 
