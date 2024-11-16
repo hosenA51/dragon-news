@@ -1,30 +1,41 @@
-import { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../provider/AuthProvider';
 
 const Register = () => {
 
-    const {createNewUser, setUser} = useContext(AuthContext);
+    const {createNewUser, setUser, updateUserProfile} = useContext(AuthContext);
+    const navigate = useNavigate()
+    const [error, setError] = useState({});
 
     const handleSubmit = (e) =>{
         e.preventDefault();
         const form = new FormData(e.target);
         const name = form.get("name");
-        const photo = form.get("file");
+        if(name.length < 5){
+            setError({...error, name: "must be more then 5 character long."});
+            return;
+        }
+        const photo = form.get("photo");
         const email = form.get("email");
         const password = form.get("password");
-        console.log({name, photo, email, password});
+        // console.log({name, photo, email, password});
 
         createNewUser(email, password)
         .then((result) =>{
             const user = result.user;
             setUser(user);
-            console.log(user);
+            updateUserProfile({displayName:name, photoURL:photo})
+            .then(()=>{
+                navigate("/");
+            }).catch(err=>{
+                // console.log(err);
+            })
         })
         .catch((error)=>{
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log(errorCode, errorMessage)
+            // console.log(errorCode, errorMessage)
         })
     }
     return (
@@ -40,12 +51,17 @@ const Register = () => {
                         <input
                         name='name' type="text" placeholder="Enter Your Name" className="input input-bordered bg-[#F3F3F3]" required />
                     </div>
+                    {
+                        error.name && (
+                            <label className='label text-xs text-rose-500'>{error.name}</label>
+                        )
+                    }
                     <div className="form-control">
                         <label className="label">
                             <span className="font-semibold text-xl">Photo URL</span>
                         </label>
                         <input
-                        name='file' type="file" placeholder="Photo URL" className="input input-bordered bg-[#F3F3F3]"/>
+                        name='photo' type="text" placeholder="Photo URL" className="input input-bordered bg-[#F3F3F3]" required/>
                     </div>
                     <div className="form-control">
                         <label className="label">
